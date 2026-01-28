@@ -1,5 +1,6 @@
 package com.mrh.listarcontactos.ui.components
 
+import PantallaDetalle
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -33,6 +34,9 @@ fun AppNavigation() {
         };
         composable<DetalleContactoDestination> {rutaNavegacion ->
             val contacto = rutaNavegacion.toRoute<DetalleContactoDestination>()
+
+            PantallaDetalle(contacto)
+
         }
 
     }

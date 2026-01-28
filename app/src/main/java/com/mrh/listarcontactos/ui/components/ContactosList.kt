@@ -41,7 +41,7 @@ import java.math.BigInteger
 
 
 @Composable
-fun MainView(navController: NavController, modifier : Modifier) {
+fun MainView(navController: NavController) {
 
     var inputNombre by remember { mutableStateOf("") }
 
@@ -57,7 +57,7 @@ fun MainView(navController: NavController, modifier : Modifier) {
                 imagenId = R.drawable.vini
             ),
             Contacto(
-                nombre = "VINI",
+                nombre = "Pepe",
                 apellido = "Rios",
                 mail = "mario.rios@iepgroup.es",
                 telefono = BigInteger("1234567"),
@@ -81,9 +81,9 @@ fun MainView(navController: NavController, modifier : Modifier) {
         }
     ) { innerPadding ->
         Column(
-            modifier
-                .fillMaxWidth()
-                .padding(innerPadding),
+            Modifier
+                .padding(innerPadding)
+                .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
@@ -101,78 +101,72 @@ fun MainView(navController: NavController, modifier : Modifier) {
                         imageVector = Icons.Filled.Search,
                         contentDescription = null
                     )
-
                 }
             )
-
-            Button(
-                onClick = {
-                    var nuevo = Contacto(
-                        nombre = inputNombre,
-                        apellido = "",
-                        mail = "",
-                        telefono = BigInteger("00")
-                    )
-                    listaContactos.add(nuevo)
-                    inputNombre = ""
+            ContactosList(
+                contactos = listaContactos.filter { contacto ->
+                    contacto.nombre.uppercase().contains(inputNombre.uppercase())
                 },
-                modifier = Modifier.padding(0.dp, 10.dp, 0.dp, 10.dp)
-            ) {
-                Text(text = "Crear")
-            }
-
-            ContactosList(listaContactos.filter{contacto ->
-                contacto.nombre.uppercase().contains(inputNombre.uppercase())
-            },
-                navController = navController)
+                navController = navController
+            )
         }
-        if(showDialog)
-        {
+
+        if (showDialog) {
             AddContactoDialog(
-                onDismis = {
+                onDismiss = {
+                    showDialog = false
+                },
+                onConfirm = { contacto ->
+                    listaContactos.add(contacto)
                     showDialog = false
                 }
-            ) { contacto ->
-                listaContactos.add(contacto);
-                showDialog = false
-            }
+            )
         }
+
     }
+
 }
 
 @Composable
-fun ContactosList(contactos: List<Contacto>, modifier: Modifier = Modifier, navController : NavController){
+fun ContactosList(
+    contactos: List<Contacto>,
+    modifier: Modifier = Modifier,
+    navController: NavController
+) {
     LazyColumn(
         modifier = modifier.padding(horizontal = 10.dp),
     ) {
 
-        items(contactos){  contacto ->
-            ContactoRowCard(contacto=contacto, onClick = {
-                navController.navigate(DetalleContactoDestination(
-                    nombre = contacto.nombre,
-                    apellido = contacto.apellido,
-                    telefono = contacto.telefono.toString(),
-                    mail = contacto.mail
-                ))
+        items(contactos) { contacto ->
+            ContactoRowCard(contacto = contacto, onClick = {
+                navController.navigate(
+                    DetalleContactoDestination(
+                        nombre = contacto.nombre,
+                        apellido = contacto.apellido,
+                        telefono = contacto.telefono.toString(),
+                        mail = contacto.mail
+                    )
+                )
             })
             Spacer(modifier = Modifier.padding(top = 10.dp))
         }
     }
 }
 
+
 @Composable
-fun AddContactoDialog(onDismis:() -> Unit, onConfirm: (Contacto) -> Unit){
-    var nombreText by remember { mutableStateOf(value = "") }
-    var apellidoText by remember { mutableStateOf(value = "") }
-    var mailText by remember { mutableStateOf(value = "") }
-    var telefonoText by remember { mutableStateOf(value = "") }
+fun AddContactoDialog(onDismiss: () -> Unit, onConfirm: (Contacto) -> Unit) {
+    var nombreText by remember { mutableStateOf("") }
+    var apellidoText by remember { mutableStateOf("") }
+    var mailText by remember { mutableStateOf("") }
+    var telefonoText by remember { mutableStateOf("") }
 
     Dialog(
-        onDismissRequest = onDismis
-    ){
+        onDismissRequest = onDismiss
+    ) {
         Card(
             modifier = Modifier.padding(16.dp)
-        ){
+        ) {
             Column(
                 modifier = Modifier
                     .padding(24.dp)
@@ -181,46 +175,42 @@ fun AddContactoDialog(onDismis:() -> Unit, onConfirm: (Contacto) -> Unit){
             ) {
                 OutlinedTextField(
                     value = nombreText,
-                    onValueChange = {
-                        texto ->
+                    onValueChange = { texto ->
                         nombreText = texto
                     },
                     label = {
-                        Text(text = "Nombre")
+                        Text("Nombre")
                     }
                 )
                 Spacer(modifier = Modifier.padding(8.dp))
                 OutlinedTextField(
                     value = apellidoText,
-                    onValueChange = {
-                            texto ->
+                    onValueChange = { texto ->
                         apellidoText = texto
                     },
                     label = {
-                        Text(text = "Apellido")
+                        Text("Apellido")
                     }
                 )
                 Spacer(modifier = Modifier.padding(8.dp))
                 OutlinedTextField(
                     value = mailText,
-                    onValueChange = {
-                            texto ->
+                    onValueChange = { texto ->
                         mailText = texto
                     },
                     label = {
-                        Text(text = "E-Mail")
+                        Text("E-Mail")
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
                 )
                 Spacer(modifier = Modifier.padding(8.dp))
                 OutlinedTextField(
                     value = telefonoText,
-                    onValueChange = {
-                            texto ->
+                    onValueChange = { texto ->
                         telefonoText = texto
                     },
                     label = {
-                        Text(text = "Telefono")
+                        Text("Telefono")
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
                 )
@@ -228,21 +218,23 @@ fun AddContactoDialog(onDismis:() -> Unit, onConfirm: (Contacto) -> Unit){
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
-                ){
+                ) {
                     TextButton(
-                        onClick = onDismis
+                        onClick = onDismiss
                     ) {
                         Text("Cancelar")
                     }
                     TextButton(
                         onClick = {
-                            if(nombreText.isNullOrBlank() && apellidoText.isNullOrBlank() && mailText.isNullOrBlank() && telefonoText.isNullOrBlank()){
-                                onConfirm(Contacto(
-                                    nombre = nombreText,
-                                    apellido = apellidoText,
-                                    mail = mailText,
-                                    telefono = BigInteger(telefonoText)
-                                ))
+                            if (nombreText.isNotBlank() && apellidoText.isNotBlank() && mailText.isNotBlank() && telefonoText.isNotBlank()) {
+                                onConfirm(
+                                    Contacto(
+                                        nombre = nombreText,
+                                        apellido = apellidoText,
+                                        mail = mailText,
+                                        telefono = BigInteger(telefonoText)
+                                    )
+                                )
                             }
                         }
                     ) {
@@ -252,4 +244,5 @@ fun AddContactoDialog(onDismis:() -> Unit, onConfirm: (Contacto) -> Unit){
             }
         }
     }
+
 }
