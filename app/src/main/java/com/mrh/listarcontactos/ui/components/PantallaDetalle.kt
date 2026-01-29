@@ -5,9 +5,12 @@ import androidx.compose.material3.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.MailOutline
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
@@ -30,6 +33,7 @@ fun PantallaDetalle(datosContacto: DetalleContactoDestination) {
                 title = { Text("Contacto") },
                 navigationIcon = {
                     IconButton(onClick = {
+
                     }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -174,6 +178,66 @@ fun PantallaDetalle(datosContacto: DetalleContactoDestination) {
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium
                     )
+                }
+            }
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFE9EBF5)),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Column(modifier = Modifier.padding(20.dp)) {
+                    // Sección de Teléfono
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Filled.Phone,
+                            contentDescription = null,
+                            tint = Color.Black,
+                            modifier = Modifier.size(28.dp)
+                        )
+                        Spacer(modifier = Modifier.width(20.dp))
+                        Column {
+                            Text(
+                                text = "Telefono",
+                                fontSize = 14.sp,
+                                color = Color.Black
+                            )
+                            Text(
+                                text = datosContacto.telefono,
+                                fontSize = 18.sp,
+                                color = Color.Black
+                            )
+                        }
+                    }
+
+                    // Línea divisora
+                    HorizontalDivider(
+                        modifier = Modifier.padding(vertical = 12.dp),
+                        thickness = 1.dp,
+                        color = Color.LightGray.copy(alpha = 0.5f)
+                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Filled.Email,
+                            contentDescription = null,
+                            tint = Color.Black,
+                            modifier = Modifier.size(28.dp)
+                        )
+                        Spacer(modifier = Modifier.width(20.dp))
+                        Column {
+                            Text(
+                                text = "Correo electronico",
+                                fontSize = 14.sp,
+                                color = Color.Black
+                            )
+                            Text(
+                                text = datosContacto.mail,
+                                fontSize = 18.sp,
+                                color = Color.Black
+                            )
+                        }
+                    }
                 }
             }
         }
