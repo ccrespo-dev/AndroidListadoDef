@@ -35,7 +35,11 @@ fun AppNavigation() {
         composable<DetalleContactoDestination> {rutaNavegacion ->
             val contacto = rutaNavegacion.toRoute<DetalleContactoDestination>()
 
-            PantallaDetalle(contacto)
+            PantallaDetalle(
+                datosContacto = contacto,
+                onBackClick = {
+                    navController.popBackStack()
+                })
 
         }
 

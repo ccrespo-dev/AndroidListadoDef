@@ -1,3 +1,6 @@
+import android.content.Intent
+import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -18,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,7 +29,10 @@ import com.mrh.listarcontactos.ui.components.DetalleContactoDestination
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PantallaDetalle(datosContacto: DetalleContactoDestination) {
+fun PantallaDetalle(datosContacto: DetalleContactoDestination, onBackClick: () -> Unit) {
+
+    val context = LocalContext.current
+
     // 1. El Scaffold es el "esqueleto" de la pantalla
     Scaffold(
         topBar = {
@@ -33,7 +40,7 @@ fun PantallaDetalle(datosContacto: DetalleContactoDestination) {
                 title = { Text("Contacto") },
                 navigationIcon = {
                     IconButton(onClick = {
-
+                        onBackClick()
                     }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -67,12 +74,24 @@ fun PantallaDetalle(datosContacto: DetalleContactoDestination) {
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.tertiary,
                         contentColor = MaterialTheme.colorScheme.onTertiary
-                    )
+                    ),
+                    onClick = {
+                        // Declaramos una ruta con la informacion del numero de telefono
+                        val u = Uri.parse("tel:" + datosContacto.telefono.toString())
+                        // Creamos el intent y seteamos el telefono
+                        val i = Intent(Intent.ACTION_DIAL,u)
+                        try{
+                            context.startActivity(i)
+                        }catch (s: SecurityException){
+                            Toast.makeText(context,"Ha ocurrido un error",
+                                Toast.LENGTH_LONG).show()
+                        }
+                    }
                 ) {
                     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                         Text(
                             text = datosContacto.nombre.firstOrNull()?.toString() ?: "",
-                            fontSize = 32.sp,
+                            fontSize = 40.sp,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -104,11 +123,11 @@ fun PantallaDetalle(datosContacto: DetalleContactoDestination) {
                             .size(56.dp)
                             .clip(CircleShape)
                             .background(MaterialTheme.colorScheme.primary),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center,
                     ) {
                         Icon(
-                            imageVector = Icons.Filled.Call,
-                            contentDescription = "Llamar",
+                            imageVector = Icons.Filled.Phone,
+                            contentDescription = "Llamada",
                             tint = Color.White,
                             modifier = Modifier.size(28.dp)
                         )
@@ -117,9 +136,9 @@ fun PantallaDetalle(datosContacto: DetalleContactoDestination) {
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
-                        text = "Llamar",
+                        text = "Llamada",
                         color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 14.sp,
+                        fontSize = 12.sp,
                         fontWeight = FontWeight.Medium
                     )
                 }
@@ -145,9 +164,9 @@ fun PantallaDetalle(datosContacto: DetalleContactoDestination) {
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
-                        text = "Mensaje",
+                        text = "Mail",
                         color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 14.sp,
+                        fontSize = 12.sp,
                         fontWeight = FontWeight.Medium
                     )
                 }
@@ -175,7 +194,7 @@ fun PantallaDetalle(datosContacto: DetalleContactoDestination) {
                     Text(
                         text = "Compartir",
                         color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 14.sp,
+                        fontSize = 12.sp,
                         fontWeight = FontWeight.Medium
                     )
                 }
